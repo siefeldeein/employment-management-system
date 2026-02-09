@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,5 +47,9 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Attendance> attendanceList = new ArrayList<>();
+
+    // === ADD THIS FOR SEARCHABLE FULL NAME ===
+    @Formula("CONCAT(first_name, ' ', last_name)")
+    private String fullName;
 
 }
