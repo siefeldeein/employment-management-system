@@ -12,7 +12,9 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     public Optional<Department> findByNameIgnoreCase(String name);
 
-    @Query("SELECT DISTINCT d FROM Department d" +
+    boolean existsByNameIgnoreCase(String name);
+    
+    @Query("SELECT DISTINCT d FROM Department d " +
             "LEFT JOIN FETCH d.employeeList e " +
             "WHERE d.id = :id")
     Optional<Department> findWithEmployeesById(@Param("id") Long id);

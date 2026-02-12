@@ -18,8 +18,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     List<Employee> findByLastNameContainingIgnoreCase(String lastName);
 
-    @Query("SELECT DISTINCT e FROM Employee e" +
-            "LEFT JOIN FETCH e.department d" +
+    @Query("SELECT DISTINCT e FROM Employee e " +
+            "LEFT JOIN FETCH e.department d " +
             "WHERE e.firstName = :fname")
     List<Employee> findByFirstNameWithDepartment(@Param("fname") String fname);
 

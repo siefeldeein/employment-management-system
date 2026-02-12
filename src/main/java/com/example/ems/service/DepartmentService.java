@@ -1,0 +1,25 @@
+package com.example.ems.service;
+
+import com.example.ems.dto.request.DepartmentCreateReq;
+import com.example.ems.dto.request.DepartmentUpdateReq;
+import com.example.ems.dto.response.DepartmentResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+public interface DepartmentService {
+
+    //Create
+    DepartmentResponse createDepartment(DepartmentCreateReq createReq);
+
+    //Read
+    DepartmentResponse getDepartmentById(Long id);
+    DepartmentResponse getDepartmentByName(String name);
+
+    List<DepartmentResponse> getAllDepartments();
+    Page<DepartmentResponse> getAllDepartments(Pageable pageable);
+
+    //Update
+    DepartmentResponse updateDepartment(Long id, DepartmentUpdateReq updateReq);
+}

@@ -35,7 +35,7 @@ public class Employee {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "first_name")
+    @Column(name = "hire_date")
     private LocalDate hireDate;
 
     @Column(name = "salary")

@@ -22,8 +22,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     List<Attendance> findByStatus(AttendanceStatus status);
 
-    @Query("SELECT DISTINCT a FROM Attendance a" +
-            "LEFT JOIN FETCH a.employee e" +
+    @Query("SELECT DISTINCT a FROM Attendance a " +
+            "LEFT JOIN FETCH a.employee e " +
             "WHERE a.status = :status ")
     List<Attendance> findByStatusWithEmployees(@Param("status") AttendanceStatus status);
 
@@ -33,8 +33,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     boolean existsByEmployeeIdAndDate(Long employeeId, LocalDate date);
 
-    @Query("SELECT DISTINCT a FROM Attendance a" +
-            "LEFT JOIN FETCH a.employee e" +
+    @Query("SELECT DISTINCT a FROM Attendance a " +
+            "LEFT JOIN FETCH a.employee e " +
             "WHERE a.id = :id ")
     Optional<Attendance> findByIdWithEmployee(@Param("id") Long id);
 
