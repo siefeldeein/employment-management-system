@@ -2,6 +2,7 @@ package com.example.ems.service;
 
 import com.example.ems.dto.request.DepartmentCreateReq;
 import com.example.ems.dto.request.DepartmentUpdateReq;
+import com.example.ems.dto.response.DepartmentDetailsResponse;
 import com.example.ems.dto.response.DepartmentResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +16,16 @@ public interface DepartmentService {
 
     //Read
     DepartmentResponse getDepartmentById(Long id);
+    DepartmentDetailsResponse getDepartmentByIdWithEmployees(Long id);
     DepartmentResponse getDepartmentByName(String name);
+
 
     List<DepartmentResponse> getAllDepartments();
     Page<DepartmentResponse> getAllDepartments(Pageable pageable);
 
     //Update
     DepartmentResponse updateDepartment(Long id, DepartmentUpdateReq updateReq);
+
+    void deleteDepartment(Long id);
+
 }

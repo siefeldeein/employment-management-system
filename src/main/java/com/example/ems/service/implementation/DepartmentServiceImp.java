@@ -3,13 +3,13 @@ package com.example.ems.service.implementation;
 import com.example.ems.dto.request.DepartmentCreateReq;
 import com.example.ems.dto.request.DepartmentUpdateReq;
 import com.example.ems.dto.response.DepartmentResponse;
+import com.example.ems.dto.response.DepartmentDetailsResponse;
 import com.example.ems.mapper.DepartmentMapper;
 import com.example.ems.model.Department;
 import com.example.ems.repository.DepartmentRepository;
 import com.example.ems.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,53 +34,60 @@ public class DepartmentServiceImp implements DepartmentService {
         }
 
         Department department = departmentMapper.toEntity(createReq);
-
         Department savedDepartment = departmentRepository.save(department);
-
         return departmentMapper.toDtoResponse(savedDepartment);
     }
 
     @Override
     public DepartmentResponse getDepartmentById(Long id) {
-        Department returnedDepartment = departmentRepository.findById(id).orElseThrow();
 
+        Department returnedDepartment = departmentRepository.findById(id).orElseThrow();
         return departmentMapper.toDtoResponse(returnedDepartment);
     }
 
     @Override
-    public DepartmentResponse getDepartmentByName(String name) {
-        Department returnedDepartment = departmentRepository.findByNameIgnoreCase(name).orElseThrow();
+    public DepartmentDetailsResponse getDepartmentByIdWithEmployees(Long id) {
 
+        Department department = departmentRepository.findWithEmployeesById(id).orElseThrow();
+        return departmentMapper.toDtoResponseDetails(department);
+    }
+
+    @Override
+    public DepartmentResponse getDepartmentByName(String name) {
+
+        Department returnedDepartment = departmentRepository.findByNameIgnoreCase(name).orElseThrow();
         return departmentMapper.toDtoResponse(returnedDepartment);
     }
 
     @Override
     public List<DepartmentResponse> getAllDepartments() {
+
         List<Department> departmentList = departmentRepository.findAll();
 
         return departmentList.stream()
             .map(departmentMapper::toDtoResponse)
             .collect(Collectors.toList());
-
-
     }
 
     @Override
     public Page<DepartmentResponse> getAllDepartments(Pageable pageable) {
+
         Page<Department> departments = departmentRepository.findAll(pageable);
-
         return departments.map(departmentMapper::toDtoResponse);
-
     }
 
     @Override
     public DepartmentResponse updateDepartment(Long id, DepartmentUpdateReq updateReq) {
-       Department department = departmentRepository.findById(id).orElseThrow();
 
-       if (updateReq.getName() != null &&
-            departmentRepository.existsByNameIgnoreCase(updateReq.getName()))
+       Department department = departmentRepository.findById(id).orElseThrow();
+       if (updateReq.getName() != null)
        {
-         throw new DataIntegrityViolationException("Name already exists");
+           if(departmentRepository.existsByNameIgnoreCase(updateReq.getName())) {
+                throw new DataIntegrityViolationException("Name already exists");
+           }
+           if (updateReq.getName().trim().isEmpty()) {
+               throw new IllegalArgumentException("Name cannot be empty");
+           }
        }
        departmentMapper.updateDepartment(updateReq, department);
 
@@ -88,6 +95,11 @@ public class DepartmentServiceImp implements DepartmentService {
 
        return departmentMapper.toDtoResponse(updatedDepartment);
     }
+
+    public void deleteDepartment(Long id){
+        departmentRepository.deleteById(id);
+    }
+
 
 
 }
