@@ -1,6 +1,6 @@
 package com.example.ems.security;
 
-import com.example.ems.repository.UserRepository;
+import com.example.ems.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
