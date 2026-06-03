@@ -1,18 +1,15 @@
-package com.example.ems.model;
+package com.example.ems.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Formula;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -29,10 +26,10 @@ public class Employee {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "phone")
+    @Column(name = "phone", unique = true)
     private String phone;
 
     @Column(name = "hire_date")
@@ -45,11 +42,14 @@ public class Employee {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendanceList = new ArrayList<>();
 
-    // === ADD THIS FOR SEARCHABLE FULL NAME ===
-    @Formula("CONCAT(first_name, ' ', last_name)")
-    private String fullName;
+    @OneToOne(mappedBy = "employee")
+    private User user;
+
+//    // === ADD THIS FOR SEARCHABLE FULL NAME ===
+//    @Formula("CONCAT(first_name, ' ', last_name)")
+//    private String fullName;
 
 }

@@ -4,8 +4,11 @@ import com.example.ems.dto.request.DepartmentCreateReq;
 import com.example.ems.dto.request.DepartmentUpdateReq;
 import com.example.ems.dto.response.DepartmentResponse;
 import com.example.ems.dto.response.DepartmentDetailsResponse;
+import com.example.ems.exception.DuplicateResourceException;
+import com.example.ems.exception.InvalidInputException;
+import com.example.ems.exception.ResourceNotFoundException;
 import com.example.ems.mapper.DepartmentMapper;
-import com.example.ems.model.Department;
+import com.example.ems.entity.Department;
 import com.example.ems.repository.DepartmentRepository;
 import com.example.ems.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +26,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class DepartmentServiceImp implements DepartmentService {
 
+    // 1️⃣ DEPENDENCIES (top of class)
     final private DepartmentMapper departmentMapper;
     final private DepartmentRepository departmentRepository;
 
+    // 2️⃣ CREATE METHODS
     @Override
     public DepartmentResponse createDepartment(DepartmentCreateReq createReq) {
 
         if (departmentRepository.existsByNameIgnoreCase(createReq.getName())) {
-            throw new DataIntegrityViolationException("Department name '" + createReq.getName() + "' already exists");
+            throw new DuplicateResourceException("Department name '" + createReq.getName() + "' already exists");
         }
 
         Department department = departmentMapper.toEntity(createReq);
@@ -38,24 +43,32 @@ public class DepartmentServiceImp implements DepartmentService {
         return departmentMapper.toDtoResponse(savedDepartment);
     }
 
+    // 3️⃣ READ METHODS GROUP
     @Override
     public DepartmentResponse getDepartmentById(Long id) {
 
-        Department returnedDepartment = departmentRepository.findById(id).orElseThrow();
+        Department returnedDepartment =
+        departmentRepository.findById(id).orElseThrow(
+        ()-> new ResourceNotFoundException("This Department Id "+ id + "doesn't exists"));
+
         return departmentMapper.toDtoResponse(returnedDepartment);
     }
 
     @Override
     public DepartmentDetailsResponse getDepartmentByIdWithEmployees(Long id) {
 
-        Department department = departmentRepository.findWithEmployeesById(id).orElseThrow();
+        Department department = departmentRepository.findWithEmployeesById(id).orElseThrow(
+        ()-> new ResourceNotFoundException("This Department Id "+ id + "doesn't exists"));
+
         return departmentMapper.toDtoResponseDetails(department);
     }
 
     @Override
     public DepartmentResponse getDepartmentByName(String name) {
 
-        Department returnedDepartment = departmentRepository.findByNameIgnoreCase(name).orElseThrow();
+        Department returnedDepartment = departmentRepository.findByNameIgnoreCase(name).orElseThrow(
+        ()-> new ResourceNotFoundException("This Department name "+ name + "doesn't exists"));
+
         return departmentMapper.toDtoResponse(returnedDepartment);
     }
 
@@ -76,30 +89,53 @@ public class DepartmentServiceImp implements DepartmentService {
         return departments.map(departmentMapper::toDtoResponse);
     }
 
+    // 4️⃣ UPDATE METHODS
     @Override
     public DepartmentResponse updateDepartment(Long id, DepartmentUpdateReq updateReq) {
 
-       Department department = departmentRepository.findById(id).orElseThrow();
-       if (updateReq.getName() != null)
-       {
-           if(departmentRepository.existsByNameIgnoreCase(updateReq.getName())) {
-                throw new DataIntegrityViolationException("Name already exists");
-           }
-           if (updateReq.getName().trim().isEmpty()) {
-               throw new IllegalArgumentException("Name cannot be empty");
-           }
-       }
+       Department department = departmentRepository.findById(id).orElseThrow(
+       ()-> new ResourceNotFoundException("This department with id " + id + " does not exist"));
+
+       // helper method to validate the update
+       validateDepartmentUpdate(updateReq, department);
+
+       //convert the dto to the entity and update in dB
        departmentMapper.updateDepartment(updateReq, department);
-
-       Department updatedDepartment = departmentRepository.save(department);
-
-       return departmentMapper.toDtoResponse(updatedDepartment);
+       return departmentMapper.toDtoResponse(department);
     }
 
+    // 5️⃣ DELETE METHODS
     public void deleteDepartment(Long id){
-        departmentRepository.deleteById(id);
+
+        Department department = departmentRepository.findById(id)
+            .orElseThrow(()-> new ResourceNotFoundException("Department not found with id " + id));
+
+        if(!department.getEmployeeList().isEmpty()){
+            throw new InvalidInputException("Cannot delete department with assigned employees");
+        }
+
+        departmentRepository.delete(department);
     }
 
 
+    // helper methods
+    private void validateDepartmentUpdate(DepartmentUpdateReq updateReq, Department department) {
 
+        if (updateReq.getName() != null)
+        {
+            //check if they left the name empty
+            if (updateReq.getName().trim().isEmpty()) {
+                throw new InvalidInputException("Department name cannot be empty");
+            }
+
+            //check first if they left the name unchanged (false) then no need to check uniqueness
+            //if they changed the name, We need to check if other departments hold the same name
+            if(!department.getName().equalsIgnoreCase(updateReq.getName()) &&
+            departmentRepository.existsByNameIgnoreCase(updateReq.getName())) {
+
+                throw new DuplicateResourceException("Department name '" + updateReq.getName() + "' already exists");
+            }
+        }
+
+    }
 }

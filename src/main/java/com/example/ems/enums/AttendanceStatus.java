@@ -1,4 +1,4 @@
-package com.example.ems.model.enums;
+package com.example.ems.enums;
 
 public enum AttendanceStatus {
     PRESENT,

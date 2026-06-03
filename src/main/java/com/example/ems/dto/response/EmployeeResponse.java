@@ -1,6 +1,5 @@
 package com.example.ems.dto.response;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +19,17 @@ public class EmployeeResponse {
     private String phone;
     private LocalDate hireDate;
     private BigDecimal salary;
+
+    private DepartmentSummary department;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DepartmentSummary{
+        private Long id;
+        private String name;
+
+    }
+
+
 }

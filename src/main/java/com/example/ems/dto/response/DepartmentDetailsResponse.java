@@ -3,16 +3,31 @@ package com.example.ems.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class DepartmentDetailsResponse {
-
     private Long id;
     private String name;
     private String description;
-    private List<EmployeeResponse> employeeList;
+
+    // Nested: Only lives here.
+    private List<EmployeeBrief> employeeList;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmployeeBrief {
+        private Long id;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String phone;
+        private LocalDate hireDate;
+        private BigDecimal salary;
+    }
 }
