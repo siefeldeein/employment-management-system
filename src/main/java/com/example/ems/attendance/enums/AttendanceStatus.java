@@ -2,9 +2,8 @@ package com.example.ems.attendance.enums;
 
 public enum AttendanceStatus {
     PRESENT,
-    ABSENT,
+    INCOMPLETE,
     LATE,
-    ON_LEAVE,  // Note: underscores for multi-word names (Java convention)
     HALF_DAY
 
 //    /**

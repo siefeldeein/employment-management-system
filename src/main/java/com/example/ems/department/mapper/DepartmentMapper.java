@@ -1,5 +1,6 @@
-package com.example.ems.department;
+package com.example.ems.department.mapper;
 
+import com.example.ems.department.Department;
 import com.example.ems.department.dto.DepartmentCreateReq;
 import com.example.ems.department.dto.DepartmentDetailsResponse;
 import com.example.ems.department.dto.DepartmentResponse;

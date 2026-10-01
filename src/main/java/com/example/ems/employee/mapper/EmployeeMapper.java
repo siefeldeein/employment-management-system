@@ -1,5 +1,6 @@
-package com.example.ems.employee;
+package com.example.ems.employee.mapper;
 
+import com.example.ems.employee.Employee;
 import com.example.ems.employee.dto.EmployeeCreateRequest;
 import com.example.ems.employee.dto.EmployeeUpdateRequest;
 import com.example.ems.employee.dto.EmployeeResponse;

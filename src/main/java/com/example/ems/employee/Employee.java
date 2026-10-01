@@ -54,4 +54,8 @@ public class Employee {
 //    @Formula("CONCAT(first_name, ' ', last_name)")
 //    private String fullName;
 
+    public String getFullName(){
+        return firstName +" "+ lastName;
+    }
+
 }

@@ -7,6 +7,7 @@ import com.example.ems.department.dto.DepartmentUpdateReq;
 import com.example.ems.common.exception.DuplicateResourceException;
 import com.example.ems.common.exception.InvalidInputException;
 import com.example.ems.common.exception.ResourceNotFoundException;
+import com.example.ems.department.mapper.DepartmentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

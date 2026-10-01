@@ -12,7 +12,10 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter @Setter
 @Entity
-@Table(name = "attendances")
+@Table(name = "attendances",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"employee_id", "date"})
+        })
 public class Attendance {
 
     @Id
@@ -25,8 +28,11 @@ public class Attendance {
     @Column(name = "check_out")
     private LocalTime checkOut;
 
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     private LocalDate date;
+
+    @Column(name = "total_hours")
+    private Double totalHours;
 
     @Enumerated(EnumType.STRING) // ← This maps PRESENT → 'PRESENT' in DB
     @Column(name = "status", nullable = false)
